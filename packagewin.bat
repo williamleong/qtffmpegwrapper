@@ -9,9 +9,9 @@ copy example\simpleencdec-build-desktop\release\simpleencdec.exe bin
 copy ffmpeg_lib_win32\*.dll bin
 
 cd bin
-del ..\..\qtffmpegwrapper_win.zip
-zip ..\..\qtffmpegwrapper_win.zip *
+del ..\qtffmpegwrapper_win.zip
+zip ..\qtffmpegwrapper_win.zip *
 cd ..
-
+rd /s /q bin
 
 

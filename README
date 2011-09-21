@@ -10,8 +10,9 @@ History
 -------
 
 21.09.2011:
-	Updated to FFmpeg git-a254452 2011-09-19, win32 binary from http://ffmpeg.zeranoe.com/builds/ 
-	Minor change to QVideoDecoder.cpp, QVideoEncoder.cpp to adapt to the new FFmpeg version
+	- Updated to FFmpeg git-a254452 2011-09-19, win32 binary from http://ffmpeg.zeranoe.com/builds/ 
+	- Minor change to QVideoDecoder.cpp, QVideoEncoder.cpp to adapt to the new FFmpeg version
+	- QVideoEncoder now allows to specify the video fps (previously fixed to 25)
 
 V 1.01 - 23.03.2010: Added QVideoDecoder::getVideoLengthMs
 
