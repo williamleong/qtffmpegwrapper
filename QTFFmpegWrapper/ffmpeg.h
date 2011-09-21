@@ -19,7 +19,6 @@ THIS SOFTWARE IS PROVIDED BY COPYRIGHT HOLDERS ``AS IS'' AND ANY EXPRESS OR IMPL
 #ifndef _FFMPEG_H
 #define _FFMPEG_H
 
-
 namespace ffmpeg {
 extern "C" {
 
@@ -29,11 +28,13 @@ extern "C" {
 
 #include <stdint.h>*/
 
+
+
 #include "libavcodec/avcodec.h"
 #include "libavformat/avformat.h"
 #include "libavutil/mathematics.h"
-#include "libavformat/riff.h"
-#include "libavformat/metadata.h"
+//#include "libavformat/riff.h"
+//#include "libavformat/metadata.h"
 //#include "libavformat/utils.h"
 #include "libavcodec/opt.h"
 #include "libavutil/rational.h"

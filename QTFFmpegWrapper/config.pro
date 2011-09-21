@@ -33,7 +33,6 @@ FFMPEG_INCLUDE_PATH = ../QTFFmpegWrapper
 # ##############################################################################
 # Do not modify: FFMPEG default settings
 # ##############################################################################
-
 # Sources for QT wrapper
 SOURCES += $$QTFFMPEGWRAPPER_SOURCE_PATH/QVideoEncoder.cpp \
     $$QTFFMPEGWRAPPER_SOURCE_PATH/QVideoDecoder.cpp
@@ -51,9 +50,10 @@ LIBS += -L$$FFMPEG_LIBRARY_PATH
 INCLUDEPATH += QVideoEncoder
 INCLUDEPATH += $$FFMPEG_INCLUDE_PATH
 
-# ##############################################################################
+# Requied for some C99 defines
+DEFINES += __STDC_CONSTANT_MACROS
+
 # ##############################################################################
 # FFMPEG: END OF CONFIGURATION
-# ##############################################################################
 # ##############################################################################
 

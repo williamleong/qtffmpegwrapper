@@ -57,6 +57,9 @@ LIBS += -L$$FFMPEG_LIBRARY_PATH
 INCLUDEPATH += QVideoEncoder
 INCLUDEPATH += $$FFMPEG_INCLUDE_PATH
 
+# Requied for some C99 defines
+DEFINES += __STDC_CONSTANT_MACROS
+
 # ##############################################################################
 # FFMPEG: END OF CONFIGURATION
 # ##############################################################################

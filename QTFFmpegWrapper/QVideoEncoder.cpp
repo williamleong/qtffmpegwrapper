@@ -71,10 +71,10 @@ bool QVideoEncoder::createFile(QString fileName,unsigned width,unsigned height,u
       return false;
    }
 
-   pOutputFormat = ffmpeg::guess_format(NULL, fileName.toStdString().c_str(), NULL);
+   pOutputFormat = ffmpeg::av_guess_format(NULL, fileName.toStdString().c_str(), NULL);
    if (!pOutputFormat) {
       printf("Could not deduce output format from file extension: using MPEG.\n");
-      pOutputFormat = ffmpeg::guess_format("mpeg", NULL, NULL);
+      pOutputFormat = ffmpeg::av_guess_format("mpeg", NULL, NULL);
    }
 
    pFormatCtx=ffmpeg::avformat_alloc_context();
@@ -99,7 +99,7 @@ bool QVideoEncoder::createFile(QString fileName,unsigned width,unsigned height,u
 
    pCodecCtx=pVideoStream->codec;
    pCodecCtx->codec_id = pOutputFormat->video_codec;
-   pCodecCtx->codec_type = ffmpeg::CODEC_TYPE_VIDEO;
+   pCodecCtx->codec_type = ffmpeg::AVMEDIA_TYPE_VIDEO;
 
    pCodecCtx->bit_rate = Bitrate;
    pCodecCtx->width = getWidth();
@@ -234,7 +234,7 @@ int QVideoEncoder::encodeImage(const QImage &img)
       if (pCodecCtx->coded_frame->pts != (0x8000000000000000LL))
          pkt.pts= av_rescale_q(pCodecCtx->coded_frame->pts, pCodecCtx->time_base, pVideoStream->time_base);
       if(pCodecCtx->coded_frame->key_frame)
-         pkt.flags |= PKT_FLAG_KEY;
+         pkt.flags |= AV_PKT_FLAG_KEY;
 
       pkt.stream_index= pVideoStream->index;
       pkt.data= outbuf;
