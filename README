@@ -1,0 +1,31 @@
+	QTFFmpegWrapper - QT FFmpeg Wrapper Class 
+	Copyright (C) 2009,2010:
+			Daniel Roggen, droggen@gmail.com			
+			
+	All rights reserved.
+
+
+
+History
+-------
+
+V 1.01 - 23.03.2010: Added QVideoDecoder::getVideoLengthMs
+
+V 1.00 - 01.01.2010: Basic functionality
+
+
+License
+-------
+
+Modified BSD license
+
+
+Dependencies
+------------
+
+- FFmpeg libraries
+
+
+
+
+

@@ -1,0 +1,1 @@
+Compiled from FFmpeg SVN revision 20736 (2009-12-05) using g++ 4.2.1-sjlj following the instructions on http://ffmpeg.arrozcru.org/wiki/index.php.
