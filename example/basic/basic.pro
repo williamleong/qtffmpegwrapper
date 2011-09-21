@@ -1,7 +1,7 @@
 # -------------------------------------------------
 # Project created by QtCreator 2010-01-04T22:00:59
 # -------------------------------------------------
-TARGET = qtffmpegwrapperdemo
+TARGET = basic
 TEMPLATE = app
 SOURCES += main.cpp \
     mainwindow.cpp \
@@ -29,13 +29,13 @@ DEFINES += DEVELMODE
 # Modify here: set FFMPEG_LIBRARY_PATH and FFMPEG_INCLUDE_PATH
 # ##############################################################################
 # Set QTFFMPEGWRAPPER_SOURCE_PATH to point to the directory containing the QTFFmpegWrapper sources
-QTFFMPEGWRAPPER_SOURCE_PATH = ../QTFFmpegWrapper
+QTFFMPEGWRAPPER_SOURCE_PATH = ../../QTFFmpegWrapper
 
 # Set FFMPEG_LIBRARY_PATH to point to the directory containing the FFmpeg import libraries (if needed - typically for Windows), i.e. the dll.a files
-FFMPEG_LIBRARY_PATH = ../ffmpeg_lib_win32
+FFMPEG_LIBRARY_PATH = ../../ffmpeg_lib_win32
 
 # Set FFMPEG_INCLUDE_PATH to point to the directory containing the FFMPEG includes (if needed - typically for Windows)
-FFMPEG_INCLUDE_PATH = ../QTFFmpegWrapper
+FFMPEG_INCLUDE_PATH = ../../QTFFmpegWrapper
 
 # ##############################################################################
 # Do not modify: FFMPEG default settings
