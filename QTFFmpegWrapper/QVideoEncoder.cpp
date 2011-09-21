@@ -55,7 +55,7 @@ QVideoEncoder::~QVideoEncoder()
    }*/
 }
 
-bool QVideoEncoder::createFile(QString fileName,unsigned width,unsigned height,unsigned bitrate,unsigned gop)
+bool QVideoEncoder::createFile(QString fileName,unsigned width,unsigned height,unsigned bitrate,unsigned gop,unsigned fps)
 {
    // If we had an open video, close it.
    close();
@@ -104,7 +104,7 @@ bool QVideoEncoder::createFile(QString fileName,unsigned width,unsigned height,u
    pCodecCtx->bit_rate = Bitrate;
    pCodecCtx->width = getWidth();
    pCodecCtx->height = getHeight();
-   pCodecCtx->time_base.den = 25;
+   pCodecCtx->time_base.den = fps;
    pCodecCtx->time_base.num = 1;
    pCodecCtx->gop_size = Gop;
    pCodecCtx->pix_fmt = ffmpeg::PIX_FMT_YUV420P;

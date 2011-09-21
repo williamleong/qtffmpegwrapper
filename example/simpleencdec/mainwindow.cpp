@@ -268,7 +268,6 @@ void MainWindow::GenerateSyntheticVideo(QString filename)
    QVideoEncoder encoder;
    encoder.createFile(filename,width,height,bitrate,gop);
 
-
    QEventLoop evt;      // we use an event loop to allow for paint events to show on-screen the generated video
 
    // Generate a few hundred frames

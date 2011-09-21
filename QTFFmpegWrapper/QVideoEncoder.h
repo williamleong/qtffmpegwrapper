@@ -75,7 +75,7 @@ class QVideoEncoder
       QVideoEncoder();
       virtual ~QVideoEncoder();
 
-      bool createFile(QString filename,unsigned width,unsigned height,unsigned bitrate,unsigned gop);
+      bool createFile(QString filename,unsigned width,unsigned height,unsigned bitrate,unsigned gop,unsigned fps=25);
       virtual bool close();
 
       virtual int encodeImage(const QImage &);
