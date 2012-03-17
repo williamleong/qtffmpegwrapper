@@ -51,7 +51,7 @@ protected:
     void nextFrame();
 
     // Encoder demo
-    void GenerateSyntheticVideo(QString filename);
+    void GenerateSyntheticVideo(QString filename,bool vfr=false);
 
 
 private:
@@ -66,6 +66,7 @@ private slots:
     void on_pushButtonSeekFrame_clicked();
     void on_actionLoad_video_triggered();
     void on_actionQuit_triggered();
+    void on_actionSave_synthetic_variable_frame_rate_video_triggered();
 };
 
 #endif // MAINWINDOW_H

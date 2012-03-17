@@ -1,6 +1,6 @@
 /*
    QTFFmpegWrapper - QT FFmpeg Wrapper Class
-   Copyright (C) 2009,2010:
+   Copyright (C) 2009-2012:
          Daniel Roggen, droggen@gmail.com
 
    All rights reserved.
@@ -213,38 +213,31 @@ bool QVideoEncoder::close()
 /**
    \brief Encode one frame
 
-   The frame must be of the same size as specifie
+   The frame must be of the same size as specified in the createFile call.
+
+   This is the standard method to encode videos with fixed frame rates.
+   Each call to encodeImage adds a frame, which will be played back at the frame rate
+   specified in the createFile call.
 **/
 int QVideoEncoder::encodeImage(const QImage &img)
 {
-   if(!isOk())
-      return -1;
+   return encodeImage_p(img);
+}
+/**
+   \brief Encode one frame
 
-   //convertImage(img);       // Custom conversion routine
-   convertImage_sws(img);     // SWS conversion
+   The frame must be of the same size as specified in the createFile call.
 
-   int out_size = ffmpeg::avcodec_encode_video(pCodecCtx,outbuf,outbuf_size,ppicture);
-   //printf("Frame size: %d\n",out_size);
-   if (out_size > 0)
-   {
-
-      av_init_packet(&pkt);
-
-      //if (pCodecCtx->coded_frame->pts != AV_NOPTS_VALUE)
-      if (pCodecCtx->coded_frame->pts != (0x8000000000000000LL))
-         pkt.pts= av_rescale_q(pCodecCtx->coded_frame->pts, pCodecCtx->time_base, pVideoStream->time_base);
-      if(pCodecCtx->coded_frame->key_frame)
-         pkt.flags |= AV_PKT_FLAG_KEY;
-
-      pkt.stream_index= pVideoStream->index;
-      pkt.data= outbuf;
-      pkt.size= out_size;
-      int ret = av_interleaved_write_frame(pFormatCtx, &pkt);
-      //printf("Wrote %d\n",ret);
-      if(ret<0)
-         return -1;
-   }
-   return out_size;
+   This mehtod allows to specify the presentation time stamp (pts) of the frame.
+   pts is specified in multiples of 1/framerate, where framerate was specified in the createFile call
+   E.g. to encode frames with a 1ms resolution: set the frame rate to 1000, and pts is the presentation
+   time in milliseconds.
+   pts must be monotonously increasing.
+   The first frame ought to have a pts of 0 to be immediately displayed.
+**/
+int QVideoEncoder::encodeImagePts(const QImage &img,unsigned pts)
+{
+   return encodeImage_p(img,true,pts);
 }
 
 
@@ -281,6 +274,56 @@ bool QVideoEncoder::initCodec()
 
    return true;
 }
+
+/**
+   \brief Encode one frame - internal function
+   custompts: true if a custom presentation time stamp  is used
+   pts: presentation time stamp in milliseconds
+**/
+int QVideoEncoder::encodeImage_p(const QImage &img,bool custompts, unsigned pts)
+{
+   if(!isOk())
+      return -1;
+
+   //convertImage(img);       // Custom conversion routine
+   convertImage_sws(img);     // SWS conversion
+
+
+
+   if(custompts)                             // Handle custom pts
+         pCodecCtx->coded_frame->pts = pts;  // Set the time stamp
+
+   int out_size = ffmpeg::avcodec_encode_video(pCodecCtx,outbuf,outbuf_size,ppicture);
+   //printf("Frame size: %d\n",out_size);
+
+
+   if(custompts)                             // Handle custom pts (must set it again for the rest of the processing)
+         pCodecCtx->coded_frame->pts = pts;  // Set the time stamp
+
+   if (out_size > 0)
+   {
+
+      av_init_packet(&pkt);
+
+      //if (pCodecCtx->coded_frame->pts != AV_NOPTS_VALUE)
+      if (pCodecCtx->coded_frame->pts != (0x8000000000000000LL))
+         pkt.pts= av_rescale_q(pCodecCtx->coded_frame->pts, pCodecCtx->time_base, pVideoStream->time_base);
+      if(pCodecCtx->coded_frame->key_frame)
+         pkt.flags |= AV_PKT_FLAG_KEY;
+
+      //printf("c %d. pts %d. codedframepts: %ld pkt.pts: %ld\n",custompts,pts,pCodecCtx->coded_frame->pts,pkt.pts);
+
+      pkt.stream_index= pVideoStream->index;
+      pkt.data= outbuf;
+      pkt.size= out_size;
+      int ret = av_interleaved_write_frame(pFormatCtx, &pkt);
+      //printf("Wrote %d\n",ret);
+      if(ret<0)
+         return -1;
+   }
+   return out_size;
+}
+
 
 
 /**

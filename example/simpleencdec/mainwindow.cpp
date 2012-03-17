@@ -14,6 +14,7 @@ THIS SOFTWARE IS PROVIDED BY COPYRIGHT HOLDERS ``AS IS'' AND ANY EXPRESS OR IMPL
 */
 
 
+#include <cmath>
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QPainter>
@@ -249,12 +250,25 @@ void MainWindow::on_actionSave_synthetic_video_triggered()
    }
 }
 
-void MainWindow::GenerateSyntheticVideo(QString filename)
+void MainWindow::on_actionSave_synthetic_variable_frame_rate_video_triggered()
+{
+   QString title("Save a synthetic video with variable frame rate");
+   QString fileName = QFileDialog::getSaveFileName(this, title,QString(),"Video (*.avi *.asf *.mpg)");
+   if(!fileName.isNull())
+   {
+      GenerateSyntheticVideo(fileName,true);
+   }
+}
+
+
+
+void MainWindow::GenerateSyntheticVideo(QString filename, bool vfr)
 {
    int width=640;
    int height=480;
    int bitrate=1000000;
    int gop = 20;
+   int fps = 25;
 
    // The image on which we draw the frames
    QImage frame(width,height,QImage::Format_RGB32);     // Only RGB32 is supported
@@ -266,16 +280,25 @@ void MainWindow::GenerateSyntheticVideo(QString filename)
 
    // Create the encoder
    QVideoEncoder encoder;
-   encoder.createFile(filename,width,height,bitrate,gop);
+   if(!vfr)
+      encoder.createFile(filename,width,height,bitrate,gop,fps);        // Fixed frame rate
+   else
+      encoder.createFile(filename,width,height,bitrate*1000/fps,gop,1000);  // For variable frame rates: set the time base to e.g. 1ms (1000fps),
+                                                                           // and correct the bitrate according to the expected average frame rate (fps)
 
    QEventLoop evt;      // we use an event loop to allow for paint events to show on-screen the generated video
 
    // Generate a few hundred frames
    int size=0;
-   for(unsigned i=0;i<500;i++)
+   int maxframe=500;
+   unsigned pts=0;
+   for(unsigned i=0;i<maxframe;i++)
    {
       // Clear the frame
       painter.fillRect(frame.rect(),Qt::red);   
+
+      // Draw a moving square
+      painter.fillRect(width*i/maxframe,height*i/maxframe,30,30,Qt::blue);
 
       // Frame number
       painter.drawText(frame.rect(),Qt::AlignCenter,QString("Frame %1\nLast frame was %2 bytes").arg(i).arg(size));
@@ -286,7 +309,19 @@ void MainWindow::GenerateSyntheticVideo(QString filename)
       ui->labelVideoFrame->setPixmap(p);
       evt.processEvents();
 
-      size=encoder.encodeImage(frame);
+      if(!vfr)
+         size=encoder.encodeImage(frame);                      // Fixed frame rate
+      else
+      {
+         // Variable frame rate: the pts of the first frame is 0,
+         // subsequent frames slow down
+         pts += sqrt(i);
+         if(i==0)
+            size=encoder.encodeImagePts(frame,0);
+         else
+            size=encoder.encodeImagePts(frame,pts);
+      }
+
       printf("Encoded: %d\n",size);
    }
 
