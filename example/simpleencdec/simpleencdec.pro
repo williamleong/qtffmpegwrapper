@@ -1,13 +1,18 @@
 # -------------------------------------------------
 # Project created by QtCreator 2010-01-04T22:00:59
 # -------------------------------------------------
+QT       += core gui widgets
+
 TARGET = simpleencdec
 TEMPLATE = app
+
 SOURCES += main.cpp \
-    mainwindow.cpp \
-    cio.cpp
+	 mainwindow.cpp \
+	 cio.cpp
+
 HEADERS += mainwindow.h \
-    cio.h
+	 cio.h
+
 FORMS += mainwindow.ui
 RESOURCES += resource.qrc
 DEFINES += DEVELMODE
@@ -42,15 +47,15 @@ FFMPEG_INCLUDE_PATH = ../../QTFFmpegWrapper
 # ##############################################################################
 # Sources for QT wrapper
 SOURCES += $$QTFFMPEGWRAPPER_SOURCE_PATH/QVideoEncoder.cpp \
-    $$QTFFMPEGWRAPPER_SOURCE_PATH/QVideoDecoder.cpp
+	 $$QTFFMPEGWRAPPER_SOURCE_PATH/QVideoDecoder.cpp
 HEADERS += $$QTFFMPEGWRAPPER_SOURCE_PATH/QVideoEncoder.h \
-    $$QTFFMPEGWRAPPER_SOURCE_PATH/QVideoDecoder.h
+	 $$QTFFMPEGWRAPPER_SOURCE_PATH/QVideoDecoder.h
 
 # Set list of required FFmpeg libraries
 LIBS += -lavutil \
-    -lavcodec \
-    -lavformat \
-    -lswscale
+	 -lavcodec \
+	 -lavformat \
+	 -lswscale
 
 # Add the path
 LIBS += -L$$FFMPEG_LIBRARY_PATH

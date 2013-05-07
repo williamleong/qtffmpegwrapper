@@ -9,6 +9,10 @@
 History
 -------
 
+07.05.2013:
+	- Updated to compile qith Qt5.x
+
+
 17.03.2012:
 	- New API encodeImagePts to set the presentation time stamp of a frame. This allows to create variable frame rate videos. See the example.
 
