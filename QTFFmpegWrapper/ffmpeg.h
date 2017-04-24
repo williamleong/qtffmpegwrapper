@@ -38,7 +38,7 @@ extern "C" {
 //#include "libavformat/riff.h"
 //#include "libavformat/metadata.h"
 //#include "libavformat/utils.h"
-#include "libavcodec/opt.h"
+#include "libavutil/opt.h"
 #include "libavutil/rational.h"
 //#include "options.h"
 #include "libavutil/avstring.h"
