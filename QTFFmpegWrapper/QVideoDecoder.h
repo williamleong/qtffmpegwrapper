@@ -23,21 +23,19 @@ THIS SOFTWARE IS PROVIDED BY COPYRIGHT HOLDERS ``AS IS'' AND ANY EXPRESS OR IMPL
 
 #include "ffmpeg.h"
 
-using namespace ffmpeg;
-
 class QVideoDecoder
 {
    protected:
       // Basic FFmpeg stuff
-      AVFormatContext *pFormatCtx;
+      ffmpeg::AVFormatContext *pFormatCtx;
       int videoStream;
-      AVCodecContext  *pCodecCtx;
-      AVCodec         *pCodec;
-	  AVCodecParameters *pCodecPar;
-      AVFrame         *pFrame;
-      AVFrame         *pFrameRGB;
-      AVPacket        packet;
-      SwsContext      *img_convert_ctx;
+	  ffmpeg::AVCodecContext  *pCodecCtx;
+	  ffmpeg::AVCodec         *pCodec;
+	  ffmpeg::AVCodecParameters *pCodecPar;
+	  ffmpeg::AVFrame         *pFrame;
+	  ffmpeg::AVFrame         *pFrameRGB;
+	  ffmpeg::AVPacket        packet;
+	  ffmpeg::SwsContext      *img_convert_ctx;
       uint8_t                 *buffer;
       int                     numBytes;
 
@@ -53,8 +51,8 @@ class QVideoDecoder
       virtual void InitVars();
 
       // Helpers
-      virtual void dumpFormat(AVFormatContext *ic,int index,const char *url,int is_output);
-      virtual void saveFramePPM(AVFrame *pFrame, int width, int height, int iFrame);
+	  virtual void dumpFormat(ffmpeg::AVFormatContext *ic, int index, const char *url, int is_output);
+	  virtual void saveFramePPM(ffmpeg::AVFrame *pFrame, int width, int height, int iFrame);
 
       // Seek
       virtual bool decodeSeekFrame(int after);

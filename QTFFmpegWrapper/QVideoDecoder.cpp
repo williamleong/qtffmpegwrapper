@@ -102,12 +102,12 @@ void QVideoDecoder::close()
 
 bool QVideoDecoder::initCodec()
 {
-	av_register_all();
-	avformat_network_init();
+	ffmpeg::av_register_all();
+	ffmpeg::avformat_network_init();
 
-	printf("License: %s\n", avformat_license());
-	printf("AVCodec version %d\n", avformat_version());
-	printf("AVFormat configuration: %s\n", avformat_configuration());
+	printf("License: %s\n", ffmpeg::avformat_license());
+	printf("AVCodec version %d\n", ffmpeg::avformat_version());
+	printf("AVFormat configuration: %s\n", ffmpeg::avformat_configuration());
 
 	return true;
 }
@@ -124,14 +124,14 @@ bool QVideoDecoder::openFile(QString filename)
 	DesiredFrameTime = DesiredFrameNumber = 0;
 	LastFrameOk = false;
 
-	AVDictionary* options = NULL;
-	av_dict_set(&options, "protocol_whitelist", "file,crypto,tcp,udp,rtp", 0);
+	ffmpeg::AVDictionary* options = NULL;
+	ffmpeg::av_dict_set(&options, "protocol_whitelist", "file,crypto,tcp,udp,rtp", 0);
 
 	// Open video file
 	if (avformat_open_input(&pFormatCtx, filename.toStdString().c_str(), NULL, &options) != 0)
 		return false; // Couldn't open file
 
-	av_dict_free(&options);
+	ffmpeg::av_dict_free(&options);
 
 	// Retrieve stream information
 	if (avformat_find_stream_info(pFormatCtx, NULL) < 0)
@@ -143,7 +143,7 @@ bool QVideoDecoder::openFile(QString filename)
 	// Find the first video stream
 	videoStream = -1;
 	for (unsigned i = 0; i < pFormatCtx->nb_streams; i++)
-		if (pFormatCtx->streams[i]->codec->codec_type == AVMEDIA_TYPE_VIDEO)
+		if (pFormatCtx->streams[i]->codec->codec_type == ffmpeg::AVMEDIA_TYPE_VIDEO)
 		{
 			videoStream = i;
 			break;
@@ -173,22 +173,22 @@ bool QVideoDecoder::openFile(QString filename)
 		pCodecCtx->time_base.den = 1000;
 
 	// Allocate video frame
-	pFrame = av_frame_alloc();
+	pFrame = ffmpeg::av_frame_alloc();
 	if (pFrame == NULL)
 		return false;
 
 	// Allocate an AVFrame structure
-	pFrameRGB = av_frame_alloc();
+	pFrameRGB = ffmpeg::av_frame_alloc();
 	if (pFrameRGB == NULL)
 		return false;
 
 	// Determine required buffer size and allocate buffer
 	//http://stackoverflow.com/questions/35678041/what-is-linesize-alignment-meaning
-	numBytes = av_image_get_buffer_size(AV_PIX_FMT_RGB24, pCodecPar->width, pCodecPar->height, 1);
+	numBytes = ffmpeg::av_image_get_buffer_size(ffmpeg::AV_PIX_FMT_RGB24, pCodecPar->width, pCodecPar->height, 1);
 	buffer = new uint8_t[numBytes];
 
 	// Assign appropriate parts of buffer to image planes in pFrameRGB
-	avpicture_fill((AVPicture *)pFrameRGB, buffer, AV_PIX_FMT_RGB24,
+	ffmpeg::avpicture_fill((ffmpeg::AVPicture *)pFrameRGB, buffer, ffmpeg::AV_PIX_FMT_RGB24,
 		pCodecPar->width, pCodecPar->height);
 
 	ok = true;
@@ -226,7 +226,7 @@ bool QVideoDecoder::decodeSeekFrame(int after)
 		// This is the frame we want to return
 
 		// Compute desired frame time
-		AVRational millisecondbase = { 1, 1000 };
+		ffmpeg::AVRational millisecondbase = { 1, 1000 };
 		DesiredFrameTime = av_rescale_q(after, pFormatCtx->streams[videoStream]->time_base, millisecondbase);
 
 		//printf("Returning already available frame %d @ %d. DesiredFrameTime: %d\n",LastFrameNumber,LastFrameTime,DesiredFrameTime);
@@ -259,7 +259,7 @@ bool QVideoDecoder::decodeSeekFrame(int after)
 			// Did we get a video frame?
 			if (frameFinished)
 			{
-				AVRational millisecondbase = { 1, 1000 };
+				ffmpeg::AVRational millisecondbase = { 1, 1000 };
 				int f = packet.dts;
 				int t = av_rescale_q(packet.dts, pFormatCtx->streams[videoStream]->time_base, millisecondbase);
 				if (LastFrameOk == false)
@@ -286,7 +286,7 @@ bool QVideoDecoder::decodeSeekFrame(int after)
 					// Convert the image format (init the context the first time)
 					int w = pCodecCtx->width;
 					int h = pCodecCtx->height;
-					img_convert_ctx = sws_getCachedContext(img_convert_ctx, w, h, pCodecCtx->pix_fmt, w, h, AV_PIX_FMT_RGB24, SWS_BICUBIC, NULL, NULL, NULL);
+					img_convert_ctx = sws_getCachedContext(img_convert_ctx, w, h, pCodecCtx->pix_fmt, w, h, ffmpeg::AV_PIX_FMT_RGB24, SWS_BICUBIC, NULL, NULL, NULL);
 
 					if (img_convert_ctx == NULL)
 					{
@@ -346,7 +346,7 @@ bool QVideoDecoder::seekMs(int tsms)
 	//printf("**** SEEK TO ms %d. LLT: %d. LT: %d. LLF: %d. LF: %d. LastFrameOk: %d\n",tsms,LastLastFrameTime,LastFrameTime,LastLastFrameNumber,LastFrameNumber,(int)LastFrameOk);
 
 	// Convert time into frame number
-	DesiredFrameNumber = av_rescale(tsms, pFormatCtx->streams[videoStream]->time_base.den, pFormatCtx->streams[videoStream]->time_base.num);
+	DesiredFrameNumber = ffmpeg::av_rescale(tsms, pFormatCtx->streams[videoStream]->time_base.den, pFormatCtx->streams[videoStream]->time_base.num);
 	DesiredFrameNumber /= 1000;
 
 	return seekFrame(DesiredFrameNumber);
@@ -409,7 +409,7 @@ bool QVideoDecoder::getFrame(QImage&img, int *effectiveframenumber, int *effecti
 /**
   \brief Debug function: saves a frame as PPM
   **/
-void QVideoDecoder::saveFramePPM(AVFrame *pFrame, int width, int height, int iFrame)
+void QVideoDecoder::saveFramePPM(ffmpeg::AVFrame *pFrame, int width, int height, int iFrame)
 {
 	FILE *pFile;
 	char szFilename[32];
@@ -432,13 +432,13 @@ void QVideoDecoder::saveFramePPM(AVFrame *pFrame, int width, int height, int iFr
 	fclose(pFile);
 }
 
-void QVideoDecoder::dumpFormat(AVFormatContext *ic,
+void QVideoDecoder::dumpFormat(ffmpeg::AVFormatContext *ic,
 	int index,
 	const char *url,
 	int is_output)
 {
 	//int i;
-	uint8_t *printed = (uint8_t*)av_mallocz(ic->nb_streams);
+	uint8_t *printed = (uint8_t*)ffmpeg::av_mallocz(ic->nb_streams);
 	if (ic->nb_streams && !printed)
 		return;
 
@@ -472,7 +472,7 @@ void QVideoDecoder::dumpFormat(AVFormatContext *ic,
 			secs = ic->start_time / AV_TIME_BASE;
 			us = ic->start_time % AV_TIME_BASE;
 			printf("%d.%06d\n",
-				secs, (int)av_rescale(us, 1000000, AV_TIME_BASE));
+				secs, (int)ffmpeg::av_rescale(us, 1000000, AV_TIME_BASE));
 		}
 		printf(", bitrate: ");
 		if (ic->bit_rate) {
@@ -486,7 +486,7 @@ void QVideoDecoder::dumpFormat(AVFormatContext *ic,
 	if (ic->nb_programs) {
 		unsigned int j, total = 0;
 		for (j = 0; j < ic->nb_programs; j++) {
-			AVDictionaryEntry* entry = av_dict_get(ic->streams[j]->metadata, "name", NULL, 0);
+			ffmpeg::AVDictionaryEntry* entry = av_dict_get(ic->streams[j]->metadata, "name", NULL, 0);
 			printf("  Program %d %s\n", ic->programs[j]->id,
 				entry ? entry->value : "");
 
@@ -513,7 +513,7 @@ void QVideoDecoder::dumpFormat(AVFormatContext *ic,
 	}
 	*/
 
-	av_free(printed);
+	ffmpeg::av_free(printed);
 }
 
 int QVideoDecoder::getVideoLengthMs()
