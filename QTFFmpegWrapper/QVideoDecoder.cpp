@@ -249,27 +249,12 @@ bool QVideoDecoder::decodeSeekFrame(int after)
 		{
 			// Is this a packet from the video stream -> decode video frame
 
-			int frameFinished;
-			avcodec_decode_video2(pCodecCtx, pFrame, &frameFinished, &packet);
+			bool frameFinished;
 
-			//printf("used %d out of %d bytes\n",len,packet.size);
-
-			//printf("Frame type: ");
-			//if(pFrame->pict_type == FF_B_TYPE)
-			//   printf("B\n");
-			//else if (pFrame->pict_type == FF_I_TYPE)
-			//   printf("I\n");
-			//else
-			//   printf("P\n");
-
-
-			/*printf("codecctx time base: num: %d den: %d\n",pCodecCtx->time_base.num,pCodecCtx->time_base.den);
-			printf("formatctx time base: num: %d den: %d\n",pFormatCtx->streams[videoStream]->time_base.num,pFormatCtx->streams[videoStream]->time_base.den);
-			printf("pts: %ld\n",pts);
-			printf("dts: %ld\n",dts);*/
-
-
-
+			// Decode video frame
+			//https://ffmpeg.org/doxygen/3.1/group__lavc__encdec.html#details
+			avcodec_send_packet(pCodecCtx, &packet);
+			frameFinished = avcodec_receive_frame(pCodecCtx, pFrame) == 0;
 
 			// Did we get a video frame?
 			if (frameFinished)
@@ -326,7 +311,7 @@ bool QVideoDecoder::decodeSeekFrame(int after)
 				} // frame of interest
 			}  // frameFinished
 		}  // stream_index==videoStream
-		av_free_packet(&packet);      // Free the packet that was allocated by av_read_frame
+		av_packet_unref(&packet);      // Free the packet that was allocated by av_read_frame
 	}
 	//printf("Returning new frame %d @ %d. LastLastT: %d. LastLastF: %d. LastFrameOk: %d\n",LastFrameNumber,LastFrameTime,LastLastFrameTime,LastLastFrameNumber,(int)LastFrameOk);
 	//printf("\n");
