@@ -33,6 +33,7 @@ class QVideoDecoder
       int videoStream;
       AVCodecContext  *pCodecCtx;
       AVCodec         *pCodec;
+	  AVCodecParameters *pCodecPar;
       AVFrame         *pFrame;
       AVFrame         *pFrameRGB;
       AVPacket        packet;

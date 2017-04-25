@@ -59,6 +59,7 @@ void QVideoDecoder::InitVars()
 	ok = false;
 	pFormatCtx = 0;
 	pCodecCtx = 0;
+	pCodecPar = 0;
 	pCodec = 0;
 	pFrame = 0;
 	pFrameRGB = 0;
@@ -86,6 +87,10 @@ void QVideoDecoder::close()
 	// Close the codec
 	if (pCodecCtx)
 		avcodec_close(pCodecCtx);
+
+	// Close the codec parameters
+	if (pCodecPar)
+		delete pCodecPar;
 
 	// Close the video file
 	if (pFormatCtx)
@@ -149,6 +154,9 @@ bool QVideoDecoder::openFile(QString filename)
 	// Get a pointer to the codec context for the video stream
 	pCodecCtx = pFormatCtx->streams[videoStream]->codec;
 
+	// Get poiner to codec parameters
+	pCodecPar = pFormatCtx->streams[videoStream]->codecpar;
+
 	// Find the decoder for the video stream
 	pCodec = avcodec_find_decoder(pCodecCtx->codec_id);
 	if (pCodec == NULL)
@@ -166,6 +174,8 @@ bool QVideoDecoder::openFile(QString filename)
 
 	// Allocate video frame
 	pFrame = av_frame_alloc();
+	if (pFrame == NULL)
+		return false;
 
 	// Allocate an AVFrame structure
 	pFrameRGB = av_frame_alloc();
@@ -173,12 +183,13 @@ bool QVideoDecoder::openFile(QString filename)
 		return false;
 
 	// Determine required buffer size and allocate buffer
-	numBytes = avpicture_get_size(AV_PIX_FMT_RGB24, pCodecCtx->width, pCodecCtx->height);
+	//http://stackoverflow.com/questions/35678041/what-is-linesize-alignment-meaning
+	numBytes = av_image_get_buffer_size(AV_PIX_FMT_RGB24, pCodecPar->width, pCodecPar->height, 1);
 	buffer = new uint8_t[numBytes];
 
 	// Assign appropriate parts of buffer to image planes in pFrameRGB
 	avpicture_fill((AVPicture *)pFrameRGB, buffer, AV_PIX_FMT_RGB24,
-		pCodecCtx->width, pCodecCtx->height);
+		pCodecPar->width, pCodecPar->height);
 
 	ok = true;
 	return true;
