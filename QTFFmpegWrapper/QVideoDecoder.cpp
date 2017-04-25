@@ -119,10 +119,14 @@ bool QVideoDecoder::openFile(QString filename)
 	DesiredFrameTime = DesiredFrameNumber = 0;
 	LastFrameOk = false;
 
+	AVDictionary* options = NULL;
+	av_dict_set(&options, "protocol_whitelist", "file,crypto,tcp,udp,rtp", 0);
 
 	// Open video file
-	if (avformat_open_input(&pFormatCtx, filename.toStdString().c_str(), NULL, NULL) != 0)
+	if (avformat_open_input(&pFormatCtx, filename.toStdString().c_str(), NULL, &options) != 0)
 		return false; // Couldn't open file
+
+	av_dict_free(&options);
 
 	// Retrieve stream information
 	if (avformat_find_stream_info(pFormatCtx, NULL) < 0)
