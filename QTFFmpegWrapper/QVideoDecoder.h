@@ -68,6 +68,7 @@ class QVideoDecoder
 
       virtual bool getFrame(QImage&img,int *effectiveframenumber=0,int *effectiveframetime=0,int *desiredframenumber=0,int *desiredframetime=0);
       virtual bool seekNextFrame();
+	  virtual bool seekLastFrame();
       virtual bool seekMs(int ts);
       virtual bool seekFrame(int64_t frame);
       virtual int getVideoLengthMs();

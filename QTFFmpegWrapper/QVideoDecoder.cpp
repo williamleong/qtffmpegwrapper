@@ -218,8 +218,6 @@ bool QVideoDecoder::decodeSeekFrame(int after)
 
 	//printf("decodeSeekFrame. after: %d. LLT: %d. LT: %d. LLF: %d. LF: %d. LastFrameOk: %d.\n",after,LastLastFrameTime,LastFrameTime,LastLastFrameNumber,LastFrameNumber,(int)LastFrameOk);
 
-
-
 	// If the last decoded frame satisfies the time condition we return it
 	//if( after!=-1 && ( LastDataInvalid==false && after>=LastLastFrameTime && after <= LastFrameTime))
 	if (after != -1 && (LastFrameOk == true && after >= LastLastFrameNumber && after <= LastFrameNumber))
@@ -321,8 +319,6 @@ bool QVideoDecoder::decodeSeekFrame(int after)
 
 /**
    \brief Decodes the next frame in the video stream
-
-
    **/
 bool QVideoDecoder::seekNextFrame()
 {
@@ -333,6 +329,17 @@ bool QVideoDecoder::seekNextFrame()
 	else
 		LastFrameOk = false;      // We didn't find the next frame (e.g. seek out of range) - mark we don't know where we are.
 	return ret;
+}
+
+/**
+\brief Decodes the last frame in the video stream
+**/
+bool QVideoDecoder::seekLastFrame()
+{
+	DesiredFrameNumber = LastFrameNumber;
+	DesiredFrameTime = LastFrameTime;
+
+	return seekNextFrame();
 }
 
 /**
