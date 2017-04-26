@@ -1,6 +1,12 @@
-	QTFFmpegWrapper - QT FFmpeg Wrapper Class 
-	Copyright (C) 2009,2010:
+	QTFFmpegWrapper - QT FFmpeg Wrapper Class
+	
+	Copyright (C) 2017:
+			William Leong, www.linkedin.com/in/williamleongwl
+			https://github.com/williamleong/qtffmpegwrapper
+			
+	Copyright (C) 2009-2012:
 			Daniel Roggen, droggen@gmail.com			
+			http://code.google.com/p/qtffmpegwrapper
 			
 	All rights reserved.
 

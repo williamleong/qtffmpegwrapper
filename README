@@ -1,14 +1,21 @@
 	QTFFmpegWrapper - QT FFmpeg Wrapper Class 
 	Copyright (C) 2009-2012:
 			Daniel Roggen, droggen@gmail.com			
+			http://code.google.com/p/qtffmpegwrapper
 			
+	Copyright (C) 2017:
+			William Leong, www.linkedin.com/in/williamleongwl
+			https://github.com/williamleong/qtffmpegwrapper
+	
 	All rights reserved.
-
-
 
 History
 -------
 
+26.04.2017:
+	- Updated to FFmpeg 3.2.4, win32 binary from http://ffmpeg.zeranoe.com/builds/ 
+	- Added seekLastFrame method
+	
 07.05.2013:
 	- Updated to compile qith Qt5.x
 
