@@ -147,8 +147,11 @@ bool QVideoDecoder::openFile(QString filename)
 	if (videoStream == -1)
 		return false; // Didn't find a video stream
 
-	// Get poiner to codec parameters
+	// Get pointer to codec parameters
 	pCodecPar = pFormatCtx->streams[videoStream]->codecpar;
+
+	if (pCodecPar->width == 0 || pCodecPar->height == 0)
+		return false;
 
 	// Find the decoder for the video stream
 	pCodec = avcodec_find_decoder(pCodecPar->codec_id);
@@ -186,6 +189,7 @@ bool QVideoDecoder::openFile(QString filename)
 	// Determine required buffer size and allocate buffer
 	//http://stackoverflow.com/questions/35678041/what-is-linesize-alignment-meaning
 	numBytes = ffmpeg::av_image_get_buffer_size(ffmpeg::AV_PIX_FMT_RGB24, pCodecPar->width, pCodecPar->height, 1);
+
 	buffer = new uint8_t[numBytes];
 
 	// Assign appropriate parts of buffer to image planes in pFrameRGB
