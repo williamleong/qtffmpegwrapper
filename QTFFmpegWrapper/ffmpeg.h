@@ -30,15 +30,14 @@ extern "C" {
 #define __STDC_CONSTANT_MACROS
 */
 
-
-
+#include <libavutil/imgutils.h>
 #include "libavcodec/avcodec.h"
 #include "libavformat/avformat.h"
 #include "libavutil/mathematics.h"
 //#include "libavformat/riff.h"
 //#include "libavformat/metadata.h"
 //#include "libavformat/utils.h"
-#include "libavcodec/opt.h"
+#include "libavutil/opt.h"
 #include "libavutil/rational.h"
 //#include "options.h"
 #include "libavutil/avstring.h"

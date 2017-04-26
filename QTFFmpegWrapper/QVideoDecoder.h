@@ -29,12 +29,13 @@ class QVideoDecoder
       // Basic FFmpeg stuff
       ffmpeg::AVFormatContext *pFormatCtx;
       int videoStream;
-      ffmpeg::AVCodecContext  *pCodecCtx;
-      ffmpeg::AVCodec         *pCodec;
-      ffmpeg::AVFrame         *pFrame;
-      ffmpeg::AVFrame         *pFrameRGB;
-      ffmpeg::AVPacket        packet;
-      ffmpeg::SwsContext      *img_convert_ctx;
+	  ffmpeg::AVCodecContext  *pCodecCtx;
+	  ffmpeg::AVCodec         *pCodec;
+	  ffmpeg::AVCodecParameters *pCodecPar;
+	  ffmpeg::AVFrame         *pFrame;
+	  ffmpeg::AVFrame         *pFrameRGB;
+	  ffmpeg::AVPacket        packet;
+	  ffmpeg::SwsContext      *img_convert_ctx;
       uint8_t                 *buffer;
       int                     numBytes;
 
@@ -50,8 +51,8 @@ class QVideoDecoder
       virtual void InitVars();
 
       // Helpers
-      virtual void dumpFormat(ffmpeg::AVFormatContext *ic,int index,const char *url,int is_output);
-      virtual void saveFramePPM(ffmpeg::AVFrame *pFrame, int width, int height, int iFrame);
+	  virtual void dumpFormat(ffmpeg::AVFormatContext *ic, int index, const char *url, int is_output);
+	  virtual void saveFramePPM(ffmpeg::AVFrame *pFrame, int width, int height, int iFrame);
 
       // Seek
       virtual bool decodeSeekFrame(int after);
@@ -67,6 +68,7 @@ class QVideoDecoder
 
       virtual bool getFrame(QImage&img,int *effectiveframenumber=0,int *effectiveframetime=0,int *desiredframenumber=0,int *desiredframetime=0);
       virtual bool seekNextFrame();
+	  virtual bool seekLastFrame();
       virtual bool seekMs(int ts);
       virtual bool seekFrame(int64_t frame);
       virtual int getVideoLengthMs();
