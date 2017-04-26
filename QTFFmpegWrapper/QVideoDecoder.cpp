@@ -88,10 +88,6 @@ void QVideoDecoder::close()
 	if (pCodecCtx)
 		avcodec_close(pCodecCtx);
 
-	// Close the codec parameters
-	if (pCodecPar)
-		delete pCodecPar;
-
 	// Close the video file
 	if (pFormatCtx)
 		avformat_close_input(&pFormatCtx);
